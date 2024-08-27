@@ -20,11 +20,20 @@ trains a smaller number of parameters, thus decreasing the GPU memory
 requirements for training a lot. PEFT can be enabled with the `--peft`
 argument.
 
-Running example (launches job in Puhti Slurm queue):
+## Run examples
+
+Run on 1 GPU with specified model and using PEFT:
 
 ```bash
 sbatch run-finetuning-puhti-gpu1.sh --model=EleutherAI/gpt-neo-1.3B --peft
 ```
+
+Run on 4 GPUs (note that batch_size has to be a multiple of the number of GPUs):
+```bash
+sbatch run-finetuning-puhti-gpu4.sh --model=EleutherAI/gpt-neo-1.3B --b 4
+```
+
+## Distributed strategy
 
 Note that currently the multi-gpu version uses distributed data
 parallel (DDP), which puts a full copy of the model on each GPU and
@@ -33,6 +42,8 @@ using a single GPU), but not save any GPU memory.
 
 Examples using FSDP, which should be able to handle models too big for
 a single GPU, will be added later.
+
+## Inference
 
 There's also a example of inference (generating text with the model)
 in `inference-demo.py` with corresponding launch script
