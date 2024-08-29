@@ -81,7 +81,7 @@ if __name__ == "__main__":
         device = torch.device("cuda", local_rank)
         print(f"Using GPU {local_rank}, device name: {torch.cuda.get_device_name(device)}")
     else:
-        print("No GPU found, using CPU instead.")
+        print(f"No GPU found, using CPU instead. (Rank: {local_rank})")
         device = torch.device("cpu")
 
     if rank == 0 and args.batch_size % world_size != 0:
