@@ -8,7 +8,6 @@
 # https://github.com/Lumi-supercomputer/Getting_Started_with_AI_workshop
 
 import argparse
-# import math
 import os
 import sys
 import time
@@ -18,7 +17,7 @@ from datasets import load_dataset
 from transformers import (AutoModelForCausalLM, AutoTokenizer,
                           DataCollatorForLanguageModeling, Trainer,
                           TrainingArguments)
-from peft import get_peft_model, LoraConfig, TaskType
+from peft import get_peft_model, LoraConfig
 
 
 if __name__ == "__main__":
@@ -117,10 +116,22 @@ if __name__ == "__main__":
     model = AutoModelForCausalLM.from_pretrained(args.model)
 
     if args.peft:
+        # peft_config = LoraConfig(
+        #     task_type=TaskType.CAUSAL_LM, inference_mode=False, r=8, lora_alpha=32,
+        #     lora_dropout=0.1
+        # )
+
+        # LoRA config from here:
+        # https://github.com/philschmid/deep-learning-pytorch-huggingface/blob/main/training/scripts/run_fsdp_qlora.py#L128
         peft_config = LoraConfig(
-            task_type=TaskType.CAUSAL_LM, inference_mode=False, r=8, lora_alpha=32,
-            lora_dropout=0.1
-        )
+            lora_alpha=8,
+            lora_dropout=0.05,
+            r=16,
+            bias="none",
+            target_modules="all-linear",
+            task_type="CAUSAL_LM",
+            # modules_to_save = ["lm_head", "embed_tokens"] # add if you want to use the Llama 3 instruct template
+            )
         model = get_peft_model(model, peft_config)
         print("Using PEFT")
         model.print_trainable_parameters()
@@ -222,26 +233,3 @@ if __name__ == "__main__":
     if rank == 0:
         print()
         print("Training done, you can find all the model checkpoints in", output_dir)
-
-    # print(f"- GPU {rank} max memory allocated: {torch.cuda.max_memory_allocated(rank)/1024/1024:.2f}MB")
-
-    # Evaluating the finetuned model
-    # with torch.no_grad():
-    #     # Calculate perplexity
-    #     eval_results = trainer.evaluate()
-    #     test_results = trainer.evaluate(eval_dataset_tok)
-
-    #     print(f'Perplexity on validation: {math.exp(eval_results["eval_loss"]):.2f}')
-    #     print(f'Perplexity on test: {math.exp(test_results["eval_loss"]):.2f}')
-
-    #     # Let's print a few sample generated reviews with the finetuned model
-    #     prompt = "The movie 'Fine-tuning models on supercomputers' was great because"
-    #     inputs = tokenizer(prompt, return_tensors="pt").to(device)
-    #     outputs = model.generate(
-    #         **inputs, do_sample=True, max_length=80, num_return_sequences=4
-    #     )
-    #     decoded_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-
-    #     print("Sample generated review:")
-    #     for txt in decoded_outputs:
-    #         print("-", txt)
