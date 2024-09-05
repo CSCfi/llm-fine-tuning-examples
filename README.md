@@ -46,13 +46,15 @@ sbatch run-finetuning-puhti-gpu4.sh --model=EleutherAI/gpt-neo-1.3B --b 4
 Run on 8 GPUs (over two nodes) with Accelerate and FSDP (note: with the accelerate launch script we need to specify which config file to use):
 
 ```bash
-sbatch run-finetuning-puhti-gpu8-accelerate.sh accelerate_config_fsdp.yaml --model=microsoft/Phi-3.5-mini-instruct --b 8
+sbatch run-finetuning-puhti-gpu8-accelerate.sh accelerate_config_fsdp.yaml \
+       --model=microsoft/Phi-3.5-mini-instruct --b 8
 ```
 
 Run on 4 GPUs (full single node) on Mahti with Accelerate, FSDP and PEFT:
 
 ```bash
-sbatch run-finetuning-mahti-gpu4-accelerate.sh accelerate_config_fsdp.yaml --model=meta-llama/Meta-Llama-3.1-8B --b 4 --peft
+sbatch run-finetuning-mahti-gpu4-accelerate.sh accelerate_config_fsdp.yaml \
+       --model=meta-llama/Meta-Llama-3.1-8B --b 4 --peft
 ```
 
 Note that the `Meta-LLama-3.1-8B` model is a "Gated model" on Hugging
