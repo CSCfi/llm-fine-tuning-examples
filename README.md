@@ -58,8 +58,10 @@ sbatch run-finetuning-mahti-gpu4-accelerate.sh accelerate_config_fsdp.yaml --mod
 Note that the `Meta-LLama-3.1-8B` model is a "Gated model" on Hugging
 Face, it requires that you log in and ask for access to the
 model. Once you have recieved access you can generate an [Access Token
-in Hugging Face](https://huggingface.co/settings/tokens). On the
-supercomputer you can then install the access token like this:
+in Hugging Face](https://huggingface.co/settings/tokens). Just click
+"Create new token" and select Token type: "Read".
+
+On the supercomputer you can then install the access token like this:
 
 ```bash
 export HF_HOME=/scratch/YOUR_PROJECT/${USER}/hf-cache
@@ -69,7 +71,10 @@ huggingface-cli login
 
 In the above command you need to replace `YOUR_PROJECT` with the
 project you use for your runs. The important thing is just that you
-use the same Hugging Face cache path as in the scripts.
+use the same Hugging Face cache path as in the scripts. The
+`huggingface-cli login` command will ask for the access token you
+created. Just reply `n` to the question about git credentials (unless
+you know you use that feature).
 
 
 ## Inference
