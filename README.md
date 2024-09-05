@@ -16,6 +16,8 @@ The launch scripts are:
 - `run-finetuning-puhti-gpu4-accelerate.sh` - fine-tuning on Puhti with one full node using [Accelerate](https://huggingface.co/docs/transformers/accelerate)
 - `run-finetuning-puhti-gpu8-accelerate.sh` - fine-tuning on Puhti with two full nodes using Accelerate
 
+There are also versions for Mahti, similarly named: just replace `puhti` with `mahti`.
+
 You can use [PEFT (Parameter-Efficient
 Fine-Tuning)](https://huggingface.co/docs/peft/index) which adaptively
 trains a smaller number of parameters, thus decreasing the GPU memory
@@ -46,6 +48,28 @@ Run on 8 GPUs (over two nodes) with Accelerate and FSDP (note: with the accelera
 ```bash
 sbatch run-finetuning-puhti-gpu8-accelerate.sh accelerate_config_fsdp.yaml --model=microsoft/Phi-3.5-mini-instruct --b 8
 ```
+
+Run on 4 GPUs (full single node) on Mahti with Accelerate, FSDP and PEFT:
+
+```bash
+sbatch run-finetuning-mahti-gpu4-accelerate.sh accelerate_config_fsdp.yaml --model=meta-llama/Meta-Llama-3.1-8B --b 4 --peft
+```
+
+Note that the `Meta-LLama-3.1-8B` model is a "Gated model" on Hugging
+Face, it requires that you log in and ask for access to the
+model. Once you have recieved access you can generate an [Access Token
+in Hugging Face](https://huggingface.co/settings/tokens). On the
+supercomputer you can then install the access token like this:
+
+```bash
+export HF_HOME=/scratch/YOUR_PROJECT/${USER}/hf-cache
+module load pytorch/2.4
+huggingface-cli login
+```
+
+In the above command you need to replace `YOUR_PROJECT` with the
+project you use for your runs. The important thing is just that you
+use the same Hugging Face cache path as in the scripts.
 
 
 ## Inference
