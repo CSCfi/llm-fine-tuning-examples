@@ -18,6 +18,11 @@ The launch scripts are:
 
 There are also versions for Mahti, similarly named: just replace `puhti` with `mahti`.
 
+**Note:** the scripts are for the most part made to be run in the
+`gputest` partition with a 15 minute time-limit. You naturally need to
+change to the proper partition for longer jobs for your real
+runs. Also change the `--account` parameter to your own project code.
+
 You can use [PEFT (Parameter-Efficient
 Fine-Tuning)](https://huggingface.co/docs/peft/index) which adaptively
 trains a smaller number of parameters, thus decreasing the GPU memory
@@ -50,10 +55,11 @@ sbatch run-finetuning-puhti-gpu8-accelerate.sh accelerate_config_fsdp.yaml \
        --model=microsoft/Phi-3.5-mini-instruct --b 8
 ```
 
-Run on 4 GPUs (full single node) on Mahti with Accelerate, FSDP and PEFT:
+Fine-tune LLama-3.1-8B on Mahti with just 2 GPUs using Accelerate,
+FSDP and PEFT:
 
 ```bash
-sbatch run-finetuning-mahti-gpu4-accelerate.sh accelerate_config_fsdp.yaml \
+sbatch run-finetuning-mahti-gpu2-accelerate.sh accelerate_config_fsdp.yaml \
        --model=meta-llama/Meta-Llama-3.1-8B --b 4 --peft
 ```
 
