@@ -65,6 +65,13 @@ if __name__ == "__main__":
         action='store_true',
         help="Use PEFT: https://huggingface.co/docs/peft/index"
     )
+    parser.add_argument(
+        "--4bit",
+        dest="bnb_4bit",
+        action='store_true',
+        help="Use 4bit quantization with bitsandbytes: "
+        "https://huggingface.co/docs/bitsandbytes/main/en/index"
+    )
     args, _ = parser.parse_known_args()
 
     # Read the environment variables provided by torchrun
@@ -113,7 +120,24 @@ if __name__ == "__main__":
     if rank == 0:
         print("Loading model and tokenizer")
 
-    model = AutoModelForCausalLM.from_pretrained(args.model)
+    quantization_config = None
+    if args.bnb_4bit:
+        from transformers import BitsAndBytesConfig
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_storage=torch.bfloat16,
+        )
+        quantization_config = bnb_config
+
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model,
+        quantization_config=quantization_config,
+        torch_dtype=torch.bfloat16,
+        device_map=device
+        )
 
     if args.peft:
         # peft_config = LoraConfig(
@@ -136,7 +160,7 @@ if __name__ == "__main__":
         print("Using PEFT")
         model.print_trainable_parameters()
 
-    model.to(device)
+    #model.to(device)
     stop = time.time()
     if rank == 0:
         print(f"Loading model and tokenizer took: {stop-start:.2f} seconds")
@@ -147,10 +171,10 @@ if __name__ == "__main__":
     training_args = TrainingArguments(
         output_dir=output_dir,
         overwrite_output_dir=not args.resume,
-        save_strategy="no",  # good for testing
-        # save_strategy="steps",   # use these if you actually want to save the model
-        # save_steps=100,
-        # save_total_limit=4,
+        # save_strategy="no",  # good for testing
+        save_strategy="steps",   # use these if you actually want to save the model
+        save_steps=400,
+        save_total_limit=4,
         # eval_strategy="steps",
         # eval_steps=200,  # compute validation loss every 200 steps
         learning_rate=2e-5,
