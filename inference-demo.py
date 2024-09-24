@@ -11,6 +11,12 @@ if __name__ == "__main__":
         help="The pre-trained model from Hugging Face to use as basis: "
         "https://huggingface.co/models"
     )
+    parser.add_argument(
+        "--prompt",
+        type=str,
+        default="The movie about how AI will take over the world was great because",
+        help="Prompt for the LLM to continue"
+    )
     args = parser.parse_args()
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -24,8 +30,7 @@ if __name__ == "__main__":
     model.to(device)
 
     with torch.no_grad():
-        prompt = "The movie 'How to run ML on LUMI - A documentation' was great because"
-        inputs = tokenizer(prompt, return_tensors='pt').to(device)
+        inputs = tokenizer(args.prompt, return_tensors='pt').to(device)
         outputs = model.generate(**inputs, do_sample=True, max_length=80, num_return_sequences=4)
         decoded_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 

@@ -90,3 +90,20 @@ you know you use that feature).
 There's also a example of inference (generating text with the model)
 in `inference-demo.py` with corresponding launch script
 `run-inference-puhti.sh`.
+
+For example to run inference with a checkpoint of a model you have
+fine-tuned previously, you would run something like:
+
+```bash
+sbatch run-inference-puhti.sh --model=/PATH/TO/CHECKPOINT \
+       --prompt="The movie was great because"
+```
+
+Naturally, you need to replace `/PATH/TO/CHECKPOINT` with the real
+path to the checkpoint you wish to use. The path where checkpoints are
+stored will usually be printed at the end of the job, but you need to
+check yourself what is the specific checkpoint you wish to use. With
+the above training scripts it will usually be something like
+`/scratch/YOUR_PROJECT/${USER}/hf-data/MODEL_NAME/checkpoint-NNN/`
+where `NNN` is the number of training steps when the checkpoint was
+created.
