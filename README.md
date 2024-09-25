@@ -16,12 +16,22 @@ The launch scripts are:
 - `run-finetuning-puhti-gpu4-accelerate.sh` - fine-tuning on Puhti with one full node using [Accelerate](https://huggingface.co/docs/transformers/accelerate)
 - `run-finetuning-puhti-gpu8-accelerate.sh` - fine-tuning on Puhti with two full nodes using Accelerate
 
-There are also versions for Mahti, similarly named: just replace `puhti` with `mahti`.
+There are also versions for Mahti, similarly named: just replace
+`puhti` with `mahti`. The scripts for LUMI are named slightly
+different due to the larger number of GPUs (or actually GCDs, due to
+the dual chip cards).
+
+- `run-finetuning-lumi-gpu1.sh` - fine-tuning on LUMI with 1 GPU
+- `run-finetuning-lumi-gpu8.sh` - fine-tuning on LUMI with one full node (8 GCDs)
+- `run-finetuning-lumi-gpu16.sh` - fine-tuning on LUMI with two full nodes (16 GCDs in total)
+- `run-finetuning-lumi-gpu8-accelerate.sh` - fine-tuning on LUMI with one full node using [Accelerate](https://huggingface.co/docs/transformers/accelerate)
+- `run-finetuning-lumi-gpu16-accelerate.sh` - fine-tuning on LUMI with two full nodes using Accelerate
 
 **Note:** the scripts are for the most part made to be run in the
-`gputest` partition with a 15 minute time-limit. You naturally need to
-change to the proper partition for longer jobs for your real
-runs. Also change the `--account` parameter to your own project code.
+`gputest` or `dev-g` partition with a 15 minute time-limit. You
+naturally need to change to the proper partition for longer jobs for
+your real runs. Also change the `--account` parameter to your own
+project code.
 
 You can use [PEFT (Parameter-Efficient
 Fine-Tuning)](https://huggingface.co/docs/peft/index) which adaptively
