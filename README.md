@@ -45,6 +45,10 @@ library supports more advanced modes of distributed training such as
 which enables using models which are too large for a single GPU's
 memory.
 
+Finally, by installing the `bitsandbytes` library, you can also try
+4-bit quantization with the `--4bit` argument, decreasing even further
+the memory requirements.
+
 ## Run examples
 
 Run on 1 GPU with specified model and using PEFT:
@@ -58,14 +62,16 @@ Run on 4 GPUs (note that batch_size has to be a multiple of the number of GPUs):
 sbatch run-finetuning-puhti-gpu4.sh --model=EleutherAI/gpt-neo-1.3B --b 4
 ```
 
-Run on 8 GPUs (over two nodes) with Accelerate and FSDP (note: with the accelerate launch script we need to specify which config file to use):
+Run on 8 GPUs (over two nodes) with Accelerate and FSDP (note: with
+the accelerate launch script we need to specify which config file to
+use):
 
 ```bash
 sbatch run-finetuning-puhti-gpu8-accelerate.sh accelerate_config_fsdp.yaml \
        --model=microsoft/Phi-3.5-mini-instruct --b 8
 ```
 
-Fine-tune LLama-3.1-8B on Mahti with just 2 GPUs using Accelerate,
+Fine-tune Llama-3.1-8B on Mahti with just 2 GPUs using Accelerate,
 FSDP and PEFT:
 
 ```bash
@@ -94,6 +100,12 @@ use the same Hugging Face cache path as in the scripts. The
 created. Just reply `n` to the question about git credentials (unless
 you know you use that feature).
 
+Fine-tune Llama-3.1-8B with 4bit quantization and PEFT on Puhti:
+
+```bash
+sbatch run-finetuning-puhti-gpu1.sh --model=meta-llama/Meta-Llama-3.1-8B \
+       --b 4 --peft --4bit
+```
 
 ## Inference
 

@@ -13,7 +13,15 @@ module load pytorch/2.4
 # This will store all the Hugging Face cache such as downloaded models
 # and datasets in the project's scratch folder
 export HF_HOME=/scratch/${SLURM_JOB_ACCOUNT}/${USER}/hf-cache
+
+if [ -d "$LOCAL_SCRATCH" ]; then        # use local scratch if we have reserved NVME
+    HF_HOME=${LOCAL_SCRATCH}/hf-cache   # note: this will cause model
+                                        # to be redownloaded every
+                                        # time
+fi
+
 mkdir -p $HF_HOME
+#cp ~/.cache/huggingface/token ${HF_HOME}/
 
 # Path to where the trained model and logging data will go
 OUTPUT_DIR=/scratch/${SLURM_JOB_ACCOUNT}/${USER}/hf-data
