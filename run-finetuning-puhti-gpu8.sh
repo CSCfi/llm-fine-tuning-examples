@@ -28,8 +28,7 @@ export TOKENIZERS_PARALLELISM=false
 RDZV_HOST=$(hostname)
 RDZV_PORT=29400
 
-set -xv  # print the command so that we can verify setting arguments
-         # correctly from the logs
+set -xv  # print the command so that we can verify setting arguments correctly from the logs
 
 srun torchrun \
      --rdzv_id=$SLURM_JOB_ID \

@@ -45,7 +45,6 @@ RUN_CMD="accelerate launch \
                     --num-workers 10
 "
 
-set -xv  # print the command so that we can verify setting arguments
-         # correctly from the logs
+set -xv  # print the command so that we can verify setting arguments correctly from the logs
 
 srun bash -c "$RUN_CMD"

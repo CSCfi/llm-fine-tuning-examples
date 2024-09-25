@@ -32,8 +32,7 @@ fi
 shift  # remove first argument from argument list
 
 
-set -xv  # print the command so that we can verify setting arguments
-         # correctly from the logs
+set -xv  # print the command so that we can verify setting arguments correctly from the logs
 
 srun accelerate launch \
      --config_file=$ACCELERATE_CONFIG \

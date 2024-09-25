@@ -23,8 +23,7 @@ mkdir -p $OUTPUT_DIR
 export TOKENIZERS_PARALLELISM=false
 
 
-set -xv  # print the command so that we can verify setting arguments
-         # correctly from the logs
+set -xv  # print the command so that we can verify setting arguments correctly from the logs
 
 srun torchrun --standalone \
      --nnodes=1 \
