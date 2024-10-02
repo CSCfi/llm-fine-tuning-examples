@@ -71,6 +71,10 @@ sbatch run-finetuning-puhti-gpu8-accelerate.sh accelerate_config_fsdp.yaml \
        --model=microsoft/Phi-3.5-mini-instruct --b 8
 ```
 
+**Note:** for a new model it might work best if your first run is with
+a single GPU to get the model downloaded to the cache. Downloading
+with multiple processes doesn't yet work well in the current script.
+
 Fine-tune Llama-3.1-8B on Mahti with just 2 GPUs using Accelerate,
 FSDP and PEFT:
 
@@ -106,6 +110,14 @@ Fine-tune Llama-3.1-8B with 4bit quantization and PEFT on Puhti:
 sbatch run-finetuning-puhti-gpu1.sh --model=meta-llama/Meta-Llama-3.1-8B \
        --b 4 --peft --4bit
 ```
+
+Another example for fine-tuning the Poro model on LUMI with just 2
+GPUs (thanks to PEFT/LoRA and 4bit quantization):
+
+```bash
+sbatch run-finetuning-lumi-gpu2.sh --model=LumiOpen/Poro-34B --b 8 --4bit --peft
+```
+
 
 ## Inference
 

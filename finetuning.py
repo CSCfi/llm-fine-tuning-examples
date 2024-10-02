@@ -136,7 +136,7 @@ if __name__ == "__main__":
         args.model,
         quantization_config=quantization_config,
         torch_dtype=torch.bfloat16,
-        #device_map=device
+        device_map=device
         )
 
     if args.peft:
