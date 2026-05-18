@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=project_462000007
+#SBATCH --account=project_xxxxxxxxx
 #SBATCH --partition=dev-g
 #SBATCH --nodes=2
 #SBATCH --tasks-per-node=1
@@ -9,8 +9,10 @@
 #SBATCH --gpus-per-node=8
 
 module purge
-module use /appl/local/csc/modulefiles/
-module load pytorch/2.5
+module use /appl/local/laifs/modules
+module load lumi-aif-singularity-bindings
+
+export SIF=/appl/local/laifs/containers/lumi-multitorch-u24r70f21m50t210-20260415_130625/lumi-multitorch-full-u24r70f21m50t210-20260415_130625.sif
 
 # This will store all the Hugging Face cache such as downloaded models
 # and datasets in the project's scratch folder
@@ -25,18 +27,30 @@ mkdir -p $OUTPUT_DIR
 # want to retain direct control of parallelism options.
 export TOKENIZERS_PARALLELISM=false
 
+# Disable Weights & Biases logging
+export WANDB_DISABLED=true
+
+# Force synchronous CUDA execution to avoid intermittent RCCL hangs in PyTorch DDP
+export CUDA_LAUNCH_BLOCKING=1
+
+export MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
+export MASTER_PORT="1${SLURM_JOB_ID:0-4}" # set port based on SLURM_JOB_ID to avoid conflicts
+
 # Use main node for Rendezvous settings
 RDZV_HOST=$(hostname)
 RDZV_PORT=29400
 
 set -xv  # print the command so that we can verify setting arguments correctly from the logs
 
-srun torchrun \
-     --rdzv_id=$SLURM_JOB_ID \
-     --rdzv_backend=c10d \
-     --rdzv_endpoint="$RDZV_HOST:$RDZV_PORT" \
-     --nnodes=2 \
-     --nproc-per-node=${SLURM_GPUS_PER_NODE} \
-     finetuning.py $* \
-     --output-path $OUTPUT_DIR \
-     --num-workers 7
+srun singularity run "$SIF" bash -c '
+    python -m torch.distributed.run \
+        --nnodes='"$SLURM_JOB_NUM_NODES"' \
+        --nproc_per_node='"$SLURM_GPUS_PER_NODE"' \
+        --node_rank="$SLURM_PROCID" \
+        --rdzv_id='"$SLURM_JOB_ID"' \
+        --rdzv_backend=c10d \
+        --rdzv_endpoint='"$MASTER_ADDR:$MASTER_PORT"' \
+        finetuning.py "$@" \
+        --output-path '"$OUTPUT_DIR"' \
+        --num-workers 7
+' bash "$@"

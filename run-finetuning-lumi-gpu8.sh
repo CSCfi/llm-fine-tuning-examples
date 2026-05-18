@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=project_462000007
+#SBATCH --account=project_xxxxxxxxx
 #SBATCH --partition=dev-g
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=56
@@ -8,8 +8,10 @@
 #SBATCH --gpus-per-node=8
 
 module purge
-module use /appl/local/csc/modulefiles/
-module load pytorch/2.5
+module use /appl/local/laifs/modules
+module load lumi-aif-singularity-bindings
+
+export SIF=/appl/local/laifs/containers/lumi-multitorch-u24r70f21m50t210-20260415_130625/lumi-multitorch-full-u24r70f21m50t210-20260415_130625.sif
 
 # This will store all the Hugging Face cache such as downloaded models
 # and datasets in the project's scratch folder
@@ -24,10 +26,12 @@ mkdir -p $OUTPUT_DIR
 # want to retain direct control of parallelism options.
 export TOKENIZERS_PARALLELISM=false
 
+# Disable Weights & Biases logging
+export WANDB_DISABLED=true
 
 set -xv  # print the command so that we can verify setting arguments correctly from the logs
 
-srun torchrun --standalone \
+srun singularity exec "$SIF" torchrun --standalone \
      --nnodes=1 \
      --nproc-per-node=$SLURM_GPUS_PER_NODE \
      finetuning.py $* \

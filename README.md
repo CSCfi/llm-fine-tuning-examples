@@ -133,6 +133,14 @@ sbatch run-inference-puhti.sh --model=/PATH/TO/CHECKPOINT \
        --prompt="The movie was great because"
 ```
 
+To run on LUMI, there is example of inference in `inference-lumi-demo.py` with corresponding launch script
+`run-inference-lumi.sh`.
+
+```bash
+sbatch run-inference-lumi.sh --model=/PATH/TO/CHECKPOINT \
+       --prompt="The movie was great because"
+```
+
 Naturally, you need to replace `/PATH/TO/CHECKPOINT` with the real
 path to the checkpoint you wish to use. The path where checkpoints are
 stored will usually be printed at the end of the job, but you need to
